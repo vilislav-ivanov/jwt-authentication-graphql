@@ -1,33 +1,24 @@
 import 'reflect-metadata';
+import { config } from 'dotenv';
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import { buildSchema } from 'type-graphql';
 
 import { Hello } from './modules/Hello';
-import { User } from './entity/User';
+import { RegisterResolver } from './modules/user/Register';
+import { LoginResolver } from './modules/user/Login';
+
+config();
 
 const main = async () => {
   const app = express();
   const schema = await buildSchema({
-    resolvers: [Hello],
+    resolvers: [Hello, RegisterResolver, LoginResolver],
   });
   const appoloServer = new ApolloServer({ schema });
 
-  const connection = await createConnection();
-  console.log('Inserting a new user into the database...');
-  const user = new User();
-  user.firstName = 'Timber';
-  user.lastName = 'Saw';
-  user.age = 25;
-  await connection.manager.save(user);
-  console.log('Saved a new user with id: ' + user.id);
-
-  console.log('Loading users from the database...');
-  const users = await connection.manager.find(User);
-  console.log('Loaded users: ', users);
-
-  console.log('Here you can setup and run express/koa/any other framework.');
+  await createConnection();
 
   appoloServer.applyMiddleware({ app });
 
