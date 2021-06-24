@@ -15,13 +15,14 @@ import { createRefreshToken } from '../utils/createRefreshToken';
 import { LoginResponse } from './login/LoginResponse';
 import { MyContext } from '../../types/MyContex';
 import { isAuth } from '../middlewares/isAuth';
+import { sendRefreshToken } from '../utils/sendRefreshToken';
 
 @Resolver()
 export class LoginResolver {
   @UseMiddleware(isAuth)
   @Query(() => User)
-  async me(@Ctx() { req }: MyContext): Promise<User | undefined> {
-    return await User.findOne(req.userId);
+  async me(@Ctx() { res }: MyContext): Promise<User | undefined> {
+    return await User.findOne(res.locals.userId);
   }
   @Mutation(() => LoginResponse)
   async login(
@@ -38,10 +39,10 @@ export class LoginResolver {
     if (!doPasswordMatch) {
       throw Error('wrong password');
     }
-    const refreshToken = createRefreshToken({ userId: user.id });
-    const accessToken = createAccessToken({ userId: user.id });
+    const refreshToken = createRefreshToken(user);
+    const accessToken = createAccessToken(user);
 
-    res.cookie('jid', refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 7 });
+    sendRefreshToken(res, refreshToken);
 
     return {
       user,

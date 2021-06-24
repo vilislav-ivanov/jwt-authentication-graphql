@@ -1,11 +1,8 @@
 import { sign } from 'jsonwebtoken';
+import { User } from '../../entity/User';
 
-interface Payload {
-  userId: number;
-}
-
-export const createAccessToken = ({ userId }: Payload) => {
-  return sign({ userId: userId }, process.env.ACCESS_TOKEN_SECRET as string, {
+export const createAccessToken = ({ id }: User) => {
+  return sign({ userId: id }, process.env.ACCESS_TOKEN_SECRET as string, {
     expiresIn: '15m',
   });
 };

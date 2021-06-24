@@ -22,10 +22,11 @@ export const isAuth: MiddlewareFn<MyContext> = async ({ context }, next) => {
     if (!user) {
       throw new Error('user not found');
     }
-    context.req.userId = user.id;
+    // context.req.userId = user.id;
+    context.res.locals.userId = user.id;
+    return next();
   } catch (error) {
     console.log(error);
     throw new Error(error);
   }
-  return next();
 };
