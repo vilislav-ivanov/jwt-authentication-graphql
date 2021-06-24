@@ -1,4 +1,4 @@
-import { Arg, Mutation, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
 import { AuthInput } from './shared/AuthInput';
 import { compare } from 'bcrypt';
 
@@ -6,12 +6,14 @@ import { User } from '../../entity/User';
 import { createAccessToken } from '../utils/createAccessToken';
 import { createRefreshToken } from '../utils/createRefreshToken';
 import { LoginResponse } from './login/LoginResponse';
+import { MyContext } from '../../types/MyContex';
 
 @Resolver()
 export class LoginResolver {
   @Mutation(() => LoginResponse)
   async login(
-    @Arg('data') { email, password }: AuthInput
+    @Arg('data') { email, password }: AuthInput,
+    @Ctx() { res }: MyContext
   ): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email } });
 
@@ -26,9 +28,10 @@ export class LoginResolver {
     const refreshToken = createRefreshToken({ userId: user.id });
     const accessToken = createAccessToken({ userId: user.id });
 
+    res.cookie('jid', refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 7 });
+
     return {
       user,
-      refreshToken,
       accessToken,
     };
   }

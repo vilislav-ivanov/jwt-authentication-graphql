@@ -4,19 +4,28 @@ import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import { buildSchema } from 'type-graphql';
+import cookieParser from 'cookie-parser';
 
 import { Hello } from './modules/Hello';
 import { RegisterResolver } from './modules/user/Register';
 import { LoginResolver } from './modules/user/Login';
+import { MyContext } from './types/MyContex';
 
 config();
 
 const main = async () => {
   const app = express();
+
+  app.use(cookieParser());
+
   const schema = await buildSchema({
     resolvers: [Hello, RegisterResolver, LoginResolver],
   });
-  const appoloServer = new ApolloServer({ schema });
+
+  const appoloServer = new ApolloServer({
+    schema,
+    context: ({ req, res }): MyContext => ({ req, res }),
+  });
 
   await createConnection();
 
