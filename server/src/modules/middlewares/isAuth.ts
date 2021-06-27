@@ -3,6 +3,7 @@ import { MiddlewareFn } from 'type-graphql/dist/interfaces/Middleware';
 import { verify } from 'jsonwebtoken';
 
 import { User } from '../../entity/User';
+import { AccessTokenPayload } from '../../types/AccessTokenPayload';
 
 export const isAuth: MiddlewareFn<MyContext> = async ({ context }, next) => {
   // console.log(context.req.cookies);
@@ -13,9 +14,10 @@ export const isAuth: MiddlewareFn<MyContext> = async ({ context }, next) => {
     throw new Error('not authenticated');
   }
   try {
-    const payload = verify(accessToken, process.env.ACCESS_TOKEN_SECRET!) as {
-      userId: number;
-    };
+    const payload = verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECRET!
+    ) as AccessTokenPayload;
 
     const user = await User.findOne(payload.userId);
 
