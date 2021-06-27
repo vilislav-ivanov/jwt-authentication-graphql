@@ -11,6 +11,7 @@ import { RegisterResolver } from './modules/user/Register';
 import { LoginResolver } from './modules/user/Login';
 import { MyContext } from './types/MyContex';
 import { refreshTokenRouteHandler } from './modules/routes';
+import { RevokeRefreshToken } from './modules/user/RevokeRefreshToken';
 
 const main = async () => {
   const app = express();
@@ -22,7 +23,7 @@ const main = async () => {
   app.use('/auth', refreshTokenRouteHandler);
 
   const schema = await buildSchema({
-    resolvers: [Hello, RegisterResolver, LoginResolver],
+    resolvers: [Hello, RegisterResolver, LoginResolver, RevokeRefreshToken],
   });
 
   const appoloServer = new ApolloServer({
