@@ -1,12 +1,11 @@
-import { MyContext } from '../../types/MyContex';
 import { MiddlewareFn } from 'type-graphql/dist/interfaces/Middleware';
 import { verify } from 'jsonwebtoken';
 
 import { User } from '../../entity/User';
+import { MyContext } from '../../types/MyContex';
 import { AccessTokenPayload } from '../../types/AccessTokenPayload';
 
 export const isAuth: MiddlewareFn<MyContext> = async ({ context }, next) => {
-  // console.log(context.req.cookies);
   const authorizationHeader = context.req.headers['authorization'];
   if (!authorizationHeader) throw new Error('no authorization header provided');
   const accessToken = authorizationHeader.split(' ')[1];
@@ -24,8 +23,8 @@ export const isAuth: MiddlewareFn<MyContext> = async ({ context }, next) => {
     if (!user) {
       throw new Error('user not found');
     }
-    // context.req.userId = user.id;
     context.res.locals.userId = user.id;
+    context.payload = payload;
     return next();
   } catch (error) {
     console.log(error);

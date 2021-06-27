@@ -21,8 +21,9 @@ import { sendRefreshToken } from '../utils/sendRefreshToken';
 export class LoginResolver {
   @UseMiddleware(isAuth)
   @Query(() => User)
-  async me(@Ctx() { res }: MyContext): Promise<User | undefined> {
-    return await User.findOne(res.locals.userId);
+  async me(@Ctx() { payload }: MyContext): Promise<User | undefined> {
+    return await User.findOne(payload?.userId);
+    // return await User.findOne(res.locals.userId);
   }
   @Mutation(() => LoginResponse)
   async login(
