@@ -9,8 +9,14 @@ import { sendRefreshToken } from '../utils/sendRefreshToken';
 export const refreshToken = (router: Router) => {
   return router.post('/refresh_token', async (req, res) => {
     const { jid } = req.cookies;
-    console.log(req.cookies);
-    if (!jid) throw new Error('No refresh token provided');
+    console.log('cookies: ', req.cookies);
+    if (!jid) {
+      return res.json({
+        success: false,
+        accessToken: null,
+        message: 'No refresh token provided',
+      });
+    }
     const payload = verify(
       jid,
       process.env.REFRESH_TOKEN_SECRET!

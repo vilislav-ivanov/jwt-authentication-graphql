@@ -10,6 +10,7 @@ export function PrivateMe(): ReactElement {
     </div>)
   }
   if (error) {
+    console.error(error.message)
     return (
       <div>
         error

@@ -5,7 +5,10 @@ import {ApolloClient, ApolloLink, ApolloProvider, concat, HttpLink, InMemoryCach
 import { App } from './components/App';
 import { getAccessToken } from './utils/accessToken';
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' });
+const httpLink = new HttpLink({ 
+  uri: 'http://localhost:4000/graphql', 
+  credentials: 'include' 
+});
 const addAccessTokenHeader = new ApolloLink((operation, forward) => {
   const token = getAccessToken();
   if (token) {
@@ -13,7 +16,6 @@ const addAccessTokenHeader = new ApolloLink((operation, forward) => {
       headers: {
         ...headers,
         authorization: `Bearer ${token}`,
-        custom: 'yoo'
       }
     }));
   }
@@ -23,7 +25,7 @@ const addAccessTokenHeader = new ApolloLink((operation, forward) => {
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   uri: 'http://localhost:4000/graphql',
-  credentials: 'include',
+  // credentials: 'include',
   link: concat(addAccessTokenHeader, httpLink)
 })
 
