@@ -14,12 +14,15 @@ export function Login({ history }: Props): ReactElement {
     <form onSubmit={async e => {
       e.preventDefault();
       console.log('form submit');
-      const { data } = await login({
+      const { data, errors } = await login({
         variables: {
           email,
           password
         }
       })
+      if (errors) {
+        console.log(errors);
+      }
       if (data && data.login.accessToken) {
         const accessToken = data.login.accessToken
         setAccessToken(accessToken)

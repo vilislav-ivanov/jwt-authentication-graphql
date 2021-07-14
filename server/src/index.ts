@@ -5,6 +5,7 @@ import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import { buildSchema } from 'type-graphql';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import { Hello } from './modules/Hello';
 import { RegisterResolver } from './modules/user/Register';
@@ -18,6 +19,12 @@ const main = async () => {
   const app = express();
 
   // Middlewares
+  app.use(
+    cors({
+      credentials: true,
+      origin: 'http://localhost:3000',
+    })
+  );
   app.use(cookieParser());
 
   // Routes
@@ -41,7 +48,7 @@ const main = async () => {
   // Connect to TypeORM
   await createConnection();
 
-  appoloServer.applyMiddleware({ app });
+  appoloServer.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => {
     console.log('server running at port 4000');
