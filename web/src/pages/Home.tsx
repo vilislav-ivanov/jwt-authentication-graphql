@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react'
-import { useHelloWorldQuery } from '../generated/graphql'
+import { useUsersQuery } from '../generated/graphql'
 
 export function Home(): ReactElement {
-  const {data, loading, error} = useHelloWorldQuery();
+  const {data, loading, error} = useUsersQuery({fetchPolicy: 'network-only'});
 
   if(loading) {
     return <div>Loading...</div>
@@ -13,7 +13,10 @@ export function Home(): ReactElement {
 
   return (
     <div>
-      {data?.helloWorld}
+      <div>Users</div>
+      {data?.users.map(user => 
+        <li key={user.id}>{user.email}, {user.id}</li>
+      )}
     </div>
   )
 }
