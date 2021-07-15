@@ -2,7 +2,9 @@ import React, { ReactElement } from 'react'
 import { useMeQuery } from '../generated/graphql'
 
 export function PrivateMe(): ReactElement {
-  const {data, loading, error} = useMeQuery()
+  const {data, loading, error} = useMeQuery({
+    fetchPolicy: 'network-only'
+  })
   if (loading) {
     return (
     <div>
